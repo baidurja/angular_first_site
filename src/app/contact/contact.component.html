@@ -36,7 +36,7 @@
     </div>
   </div>
 
-  <div fxFlex fxFlexOffset="20px" class="form-size">
+  <div fxFlex fxFlexOffset="20px" class="form-size" *ngIf="!interimDisplay && !subInProgress && !feedbackErrMess" [@expand2]>
     <h3>Send us your Feedback</h3>
     <form novalidate [formGroup]="feedbackForm" #fform="ngForm" (ngSubmit)="onSubmit()">
       <p>
@@ -55,7 +55,7 @@
       </p>
       <p>
         <mat-form-field class="half-width">
-          <input matInput formControlName="telnum" placeholder="Phone Number" type="tel" pattern="[0-9]*" required/>
+          <input matInput formControlName="telnum" placeholder="Phone Number" type="tel" pattern="[0-9]*" required />
           <mat-error *ngIf="formErrors.telnum">
             {{formErrors.telnum}}
           </mat-error>
@@ -85,7 +85,31 @@
         </mat-form-field>
       </p>
       <button type="submit" mat-button class="background-primary text-floral-white"
-              [disabled]="feedbackForm.invalid">Submit</button>
+              [disabled]="feedbackForm.invalid">
+        Submit
+      </button>
     </form>
+  </div>
+  <div fxFlex *ngIf="subInProgress">
+    <h3>Send us your Feedback</h3>
+    <h4>Submitting Form</h4>
+    <mat-spinner></mat-spinner>
+  </div>
+  <div fxFlex *ngIf="interimDisplay" [@expand2]>
+    <h3>Send us your Feedback</h3>
+    <h4>Your Submission</h4>
+    <p>
+      First Name: {{feedback.firstname}}<br><br>
+      Last Name: {{feedback.lastname}}<br><br>
+      Phone: {{feedback.telnum}}<br><br>
+      Email: {{feedback.email}}<br><br>
+      Contact You? {{feedback.agree}}<br><br>
+      How? {{feedback.contacttype}}<br><br>
+      Feedback: {{feedback.message}}
+    </p>
+  </div>
+  <div fxFlex *ngIf="feedbackErrMess">
+    <h2>Error</h2>
+    <h4 style="color:tomato">{{feedbackErrMess}}</h4>
   </div>
 </div>

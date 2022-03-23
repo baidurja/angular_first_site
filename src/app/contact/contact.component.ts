@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { timer } from 'rxjs';
 
 import { Feedback, ContactType } from '../shared/feedback';
-import { flyInOut } from '../animations/app.animation';
+import { flyInOut, expand2 } from '../animations/app.animation';
 import { FeedbackService } from '../services/feedback.service';
 
 @Component({
@@ -14,13 +15,17 @@ import { FeedbackService } from '../services/feedback.service';
     'style': 'display: block'
   },
   animations: [
-    flyInOut()
+    flyInOut(),
+    expand2()
   ]
 })
 export class ContactComponent implements OnInit {
 
   feedbackForm: FormGroup;
   feedbackErrMess: string;
+  feedback: Feedback;
+  interimDisplay: boolean;
+  subInProgress: boolean;
   contactType = ContactType;
   @ViewChild('fform') feedbackFormDirective;
 
@@ -58,6 +63,8 @@ export class ContactComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.interimDisplay = false;
+    this.subInProgress = false;
   }
 
   createForm(): void {
@@ -97,11 +104,7 @@ export class ContactComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
-    console.log(this.feedbackForm.value);
-    this.feedbackService.submitFeedback(this.feedbackForm.value)
-      .subscribe(feedback => { },
-        errmess => this.feedbackErrMess = <any>errmess);
+  resetForm(): void {
     this.feedbackForm.reset({
       firstname: '',
       lastname: '',
@@ -112,5 +115,14 @@ export class ContactComponent implements OnInit {
       message: ''
     });
     this.feedbackFormDirective.resetForm();
+  }
+
+  onSubmit(): void {
+    this.subInProgress = true;
+    console.log(this.feedbackForm.value);
+    this.feedbackService.submitFeedback(this.feedbackForm.value)
+      .subscribe(feedback => { this.feedback = feedback; this.interimDisplay = true; this.subInProgress = false; },
+        errmess => { this.feedback = null; this.interimDisplay = false; this.subInProgress = false; this.feedbackErrMess = <any>errmess });
+    timer(10000).subscribe(x => { this.interimDisplay = false; this.resetForm() });
   }
 }

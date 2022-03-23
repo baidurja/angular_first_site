@@ -54,3 +54,22 @@ export function expand() {
     ])
   ])
 }
+
+export function expand2() {
+  return trigger('expand2', [
+    state('*', style({
+      opacity: 1,
+      transform: 'perspective(500px) translateZ(0)'
+    })),
+    transition(':enter', [
+      style({
+        transform: 'perspective(500px) translateZ(50%)',
+        opacity: 0.5
+      }),
+      animate('2s ease-in-out', style({
+        opacity: 1,
+        transform: 'perspective(500px) translateZ(50%)'
+      }))
+    ])
+  ])
+}
